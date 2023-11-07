@@ -1,0 +1,62 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ci-pipeline
+spec:
+  params:
+    - name: git-url
+      description: project source git repo url
+      type: string
+    - name: git-revision
+      default: main
+      description: repo revision
+      type: string
+    - name: ocp-namespace
+      description: namespace for the deployment
+      type: string
+    - name: IMAGE
+      description: output image name
+      type: string
+    - name: DOCKERFILE
+      default: ./Dockerfile
+      description: Path to the Dockerfile to build
+      type: string
+    - name: CONTEXT
+      default: .
+      description: Path to the directory to use as context.
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: subdirectory
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+        - name: revision
+          value: $(params.git-revision)
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source
+    - name: buildah
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: DOCKERFILE
+          value: $(params.DOCKERFILE)
+        - name: CONTEXT
+          value: $(params.CONTEXT)
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: source
+  workspaces:
+    - name: source
