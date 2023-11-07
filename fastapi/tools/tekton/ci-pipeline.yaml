@@ -58,5 +58,8 @@ spec:
       workspaces:
         - name: source
           workspace: source
+        - name: dockerconfig
+          workspace: dockerconfig
   workspaces:
     - name: source
+    - name: dockerconfig
