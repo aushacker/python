@@ -50,6 +50,8 @@ spec:
           value: $(params.DOCKERFILE)
         - name: CONTEXT
           value: $(params.CONTEXT)
+        - name: BUILD_EXTRA_ARGS
+          value: "--annotation org.opencontainers.image.source=$(tasks.git-clone.results.url) --annotation org.opencontainers.image.revision=$(tasks.git-clone.results.commit)" 
       runAfter:
         - git-clone
       taskRef:
