@@ -1,3 +1,2 @@
-message = "Hello Python world!"
-print(mesage)
-
+name = input("What's your name? ")
+print("Hello " + name)
